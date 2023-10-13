@@ -7,7 +7,7 @@ from typing import Optional
 class Commemoration:
     """Child of Plaque"""
 
-    other: str
+    other: Optional[str] | None = None
     first_name: Optional[str] | None = None
     last_name: Optional[str] | None = None
 
@@ -16,17 +16,18 @@ class Commemoration:
 class Coordinates:
     """Child of Plaque"""
 
-    lon: float
-    lat: float
+    lon: Optional[float] | None = None
+    lat: Optional[float] | None = None
 
 
 @dataclass
 class Plaque:
     """Plaque with Coordinates and Commemoration descendants"""
 
-    original_id: int
     commemorates: Commemoration
-    address: str
-    address_complement: str
+    street_address: str
     arrondissement: int
+    city: str
+    address_complement: str
     coordinates: Coordinates
+    original_id: int
