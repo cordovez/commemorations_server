@@ -24,10 +24,11 @@ class Coordinates:
 class Plaque:
     """Plaque with Coordinates and Commemoration descendants"""
 
-    commemorates: Commemoration
-    street_address: str
-    arrondissement: int
-    city: str
-    address_complement: str
-    coordinates: Coordinates
     original_id: int
+    original_record: str
+    commemorates: Commemoration
+    street_address: Optional[str] | None = None
+    arrondissement: Optional[int] | None = None
+    city: Optional[str] | None = None
+    address_complement: Optional[str] | None = None
+    coordinates: Optional[Coordinates] | None = None

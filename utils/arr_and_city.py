@@ -1,3 +1,6 @@
+"""
+Extract arrondissement and city
+"""
 import re
 
 

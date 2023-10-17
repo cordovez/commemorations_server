@@ -1,83 +1,55 @@
-import json
-import re
+"""Plaque controllers"""
 
-from Models.Plaque import Commemoration, Plaque
-from utils.arr_and_city import extract_arrondissement_and_city
-from utils.extract_coords import extract_coordinates
-from utils.split_names import match_for_names
+from utils.mongo_functions import (
+    mongo_delete_one,
+    mongo_find,
+    mongo_find_one,
+    mongo_get_plaques,
+    mongo_insert_many,
+    mongo_insert_one,
+)
 
 
-def plaques_in_english(data):
-    new_plaques_list = []
+async def all_plaques(skip, limit) -> list:
+    """returns list of plaques in english"""
+    plaques = mongo_get_plaques(skip, limit)
 
-    for plaque in data:
-        coords = extract_coordinates(plaque)
-        match = match_for_names(plaque)
-        if match:
-            first = match.group("first_name")
-            last = match.group("last_name").capitalize()
-            commemorant = Commemoration(first_name=first, last_name=last)
-        else:
-            entry_no_upper = plaque["commemore"].title()
-            commemorant = Commemoration(other=entry_no_upper)
+    return plaques
 
-        if plaque["precision_adresse"] == "NULL":
-            complementary_info = None
 
-        else:
-            complementary_info = plaque["precision_adresse"]
+async def plaque_by_id(plaque_id: str):
+    """Calls mongo function that searches for document by plaque_id and
+    returns that document"""
+    plaque = mongo_find_one(plaque_id)
+    return plaque
 
-        street_address = (
-            plaque["adresse_complete"][:-12] if plaque.get("adresse_complete") else None
-        )
-        city = (
-            plaque["adresse_complete"][-5:] if plaque.get("adresse_complete") else None
-        )
 
-        values = {
-            "commemorates": commemorant,
-            "street_address": street_address,
-            "arrondissement": plaque["empty"],
-            "city": city,
-            "address_complement": complementary_info,
-            "coordinates": coords,
-            "original_id": plaque["identifiant"],
-        }
-        new_plaque = Plaque(**values)
-        new_plaques_list.append(new_plaque)
-    sorted_list = sorted(new_plaques_list, key=lambda x: x.original_id)
+async def plaque_by_original_id(original: int):
+    """Calls mongo function that searches for document by the id originally
+    given by the Paris Open Data and returns that document"""
+    plaque = mongo_find(original)
+    return plaque
 
-    # return sorted_list
 
-    # FOR DEVELOPER USE
-    # Create a list of PlaqueResponseModel instances with only the "commemorates" field,
-    # excluding some
-    list_of_exlcludes = [
-        "Liberation De Paris",
-        "Eleves De Ces Ecoles Morts En Déportation Parce Que Nés Juifs",
-        "Comite Parisien De La Liberation",
-    ]
-    response_data = []
-    for plaque in sorted_list:
-        commemoration_text = (
-            plaque.commemorates.other
-        )  # Assuming "other" contains the commemoration text
+async def add_multiple_plaques(plaques: list):
+    """Controller sends a list of plaque to database, returns a message dict"""
+    result = mongo_insert_many(plaques)
+    message = {}
+    if result:
+        message = {"message": "new plaques have been added"}
 
-        if (
-            commemoration_text not in list_of_exlcludes
-            and plaque.commemorates.other is not None
-        ):
-            response_data.append(
-                {
-                    "id": plaque.original_id,
-                    "commemorates": plaque.commemorates,
-                }
-            )
-            # response_data = [
-            #     {
-            #         "id": plaque.original_id,
-            #         "commemorates": plaque.commemorates.other,
-            #     }
-            #     for plaque in sorted_list
-            # ]
-    return response_data  # len =265
+    return message
+
+
+async def add_single_plaque(plaque) -> str:
+    """Function calls a pymongo insert function and returns inserted id"""
+    result = mongo_insert_one(plaque)
+    return result
+
+
+async def delete_plaque_by_id(plaque_id) -> bool:
+    result = mongo_delete_one(plaque_id)
+
+    if not result:
+        return False
+    return True

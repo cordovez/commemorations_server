@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from MongoDB.db import init_db
+from routes.admin_routes import admin_router
 from routes.public_routes import public_router
 
 app = FastAPI()
@@ -23,6 +24,7 @@ app.add_middleware(
 )
 
 app.include_router(public_router, tags=["public access"])
+app.include_router(admin_router, tags=["admin access"])
 
 
 @app.on_event("startup")
