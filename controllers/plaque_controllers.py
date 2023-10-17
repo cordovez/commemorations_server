@@ -48,6 +48,7 @@ async def add_single_plaque(plaque) -> str:
 
 
 async def delete_plaque_by_id(plaque_id) -> bool:
+    """Function calls pymongo delete function and returns boolean value"""
     result = mongo_delete_one(plaque_id)
 
     if not result:

@@ -2,6 +2,7 @@
 Mongo DB functions
 """
 from bson.objectid import ObjectId
+from fastapi import HTTPException, status
 from fastapi.encoders import jsonable_encoder
 from pymongo import MongoClient
 
@@ -73,5 +74,11 @@ def mongo_update_by_original_id(original_id, document):
 
 
 def mongo_delete_one(plaque_id):
+    """Function looks for passed _id and if found in db, deletes it.
+    Otherwise an HTTP 404 is returned"""
     id_to_remove = ObjectId(plaque_id)
-    return PLAQUES_COLLECTION.delete_one({"_id": id_to_remove})
+    plaque_found = PLAQUES_COLLECTION.find_one({"_id": id_to_remove})
+    if plaque_found:
+        return PLAQUES_COLLECTION.delete_one({"_id": id_to_remove})
+    else:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)

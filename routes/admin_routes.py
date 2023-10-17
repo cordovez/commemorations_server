@@ -35,7 +35,15 @@ async def add_plaques(plaques: list[Plaque]):
 
 @admin_router.delete("/delete_plaque/{plaque_id}")
 async def remove_plaque(plaque_id):
+    """Route returns a message if plaque by _id is successfully returned"""
     result = await delete_plaque_by_id(plaque_id)
     if result:
         return {"message": f"Plaque with id: {plaque_id} was removed"}
-    return result
+
+
+@admin_router.patch("/update/{plaque_id}")
+async def update_plaque(plaque_id):
+    pass
+
+
+# IN DELETE FUNCTION, FIRST DO A SEARCH TO SEE IF ID EXISTS AND THROW AN ERROR IF IT DOESN'T.

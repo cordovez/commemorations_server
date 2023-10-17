@@ -23,8 +23,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(public_router, tags=["public access"])
-app.include_router(admin_router, tags=["admin access"])
+app.include_router(public_router, prefix="/api", tags=["public access"])
+app.include_router(admin_router, prefix="/api", tags=["admin access"])
 
 
 @app.on_event("startup")
