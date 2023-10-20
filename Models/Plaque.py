@@ -1,6 +1,6 @@
 """ Data Classes """
 from dataclasses import dataclass
-from typing import Optional
+from typing import Dict, Optional
 
 
 @dataclass
@@ -30,5 +30,16 @@ class Plaque:
     street_address: Optional[str] | None = None
     arrondissement: Optional[int] | None = None
     city: Optional[str] | None = None
+    address_complement: Optional[str] | None = None
+    coordinates: Optional[Coordinates] | None = None
+
+
+@dataclass
+class PlaqueUpdates:
+    """Plaque with Coordinates and Commemoration descendants"""
+
+    commemorates: Optional[Commemoration] | None = None
+    street_address: Optional[str] | None = None
+    arrondissement: Optional[int] | None = None
     address_complement: Optional[str] | None = None
     coordinates: Optional[Coordinates] | None = None
