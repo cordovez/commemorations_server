@@ -3,8 +3,8 @@
 Anglophone names
 Names where the order is LAS-NAME First-Name
 
-Manual edits:
-9 , 10, 18, 30, 65, 101, 108, 138, 157, 162, 210, 221, 227, 230, 280, 321, 332,
+Manual edits (number indicates original Open Data Paris id):
+~~9 , 10, 18, 30, 65, 101 (names separated),~~ 108, ~~138, 157 162 210, 221, ,~~,227, 230, 280, 321, 332,
 356, 450, 477, 480, 490, 671, 672, 739, 843, 848, 851, 863, 890, 955, 1032, 1066, 1119, 1137,
 
 possibly 170, 207, 285, 333, 337, 455, 481, 668, 835, 873, 959,

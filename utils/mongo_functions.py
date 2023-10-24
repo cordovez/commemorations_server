@@ -62,10 +62,29 @@ def mongo_find_one(plaque_id):
     return document_found
 
 
+def mongo_find_one_by_last_name(last_name):
+    """function finds one document by last name"""
+
+    document_found = PLAQUES_COLLECTION.find_one({"commemorates.last_name": last_name})
+    if document_found:
+        document_found["_id"] = str(document_found["_id"])
+    return document_found
+
+
 def mongo_find(original_id):
     """function finds one document by ObjectId"""
     found_document = PLAQUES_COLLECTION.find_one({"original_id": original_id})
     return found_document
+
+
+def mongo_find_many_with_image(skip, limit):
+    """function finds one document by ObjectId"""
+    found_documents = (
+        PLAQUES_COLLECTION.find({"image_url": {"$exists": True}})
+        .skip(skip)
+        .limit(limit)
+    )
+    return found_documents
 
 
 def mongo_update_by_original_id(original_id, document):
