@@ -1,7 +1,9 @@
 """
 Admin Routes
 """
-from fastapi import APIRouter
+import os
+
+from fastapi import APIRouter, File, UploadFile
 from fastapi.encoders import jsonable_encoder
 
 from controllers.plaque_controllers import upload_image_and_add_url
@@ -55,8 +57,16 @@ async def update_plaque(plaque_id, update_document: PlaqueUpdates):
 
 
 @admin_router.post("/upload_image/{plaque_id}", summary="Allows upload to Cloudinary")
-async def send_to_cloudinary(path_to_image: str, plaque_id: str):
-    """Route sends photo to cloudinary"""
-    result = await upload_image_and_add_url(path_to_image, plaque_id)
+async def send_to_cloudinary(plaque_id: str, file: UploadFile = File(...)):
+    """Route sends photo to cloudinary and saves a url of the image transformed
+    for delivery to the plaque document"""
 
-    return result
+    file_to_cloudinary = file.file
+
+    result = await upload_image_and_add_url(
+        plaque_id,
+        file_to_cloudinary,
+    )
+
+    if result:
+        return {"Uploaded": f"file {file.filename} has been uploaded"}
