@@ -2,6 +2,9 @@
 from dataclasses import dataclass
 from typing import Dict, Optional
 
+from bson import ObjectId
+from pydantic import Field
+
 
 @dataclass
 class Commemoration:
@@ -27,6 +30,21 @@ class Plaque:
     original_id: int
     original_record: str
     commemorates: Commemoration
+    street_address: Optional[str] | None = None
+    arrondissement: Optional[int] | None = None
+    city: Optional[str] | None = None
+    address_complement: Optional[str] | None = None
+    coordinates: Optional[Coordinates] | None = None
+
+
+@dataclass
+class PlaqueOut:
+    """Plaque with Coordinates and Commemoration descendants"""
+
+    id: str = Field(alias="_id")
+    original_id: int | None = None
+    original_record: str | None = None
+    commemorates: Commemoration | None = None
     street_address: Optional[str] | None = None
     arrondissement: Optional[int] | None = None
     city: Optional[str] | None = None

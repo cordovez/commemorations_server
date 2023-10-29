@@ -9,7 +9,7 @@ from fastapi.encoders import jsonable_encoder
 from pymongo import MongoClient
 from pymongo.collection import ReturnDocument
 
-from Models.Plaque import Plaque
+from Models.Plaque import Plaque, PlaqueOut
 from MongoDB.db import connection_string
 from utils.merge_two_dict import merge
 
@@ -27,7 +27,7 @@ def mongo_insert_one(doc):
     return str(returned_document.inserted_id)
 
 
-def mongo_insert_many(documents: list) -> list[str]:
+def mongo_insert_many(documents: list):
     """
     Pymongo insert multiple documents.
     Python objects (including descendant models) must be converted to dict.
@@ -37,7 +37,7 @@ def mongo_insert_many(documents: list) -> list[str]:
     return returned_doc.inserted_ids
 
 
-def mongo_get_plaques(skip, limit) -> list[dict]:
+def mongo_get_plaques(skip, limit):
     """function gets list of plaques with limit default =10"""
     collection = Plaques_db.plaques
     plaques = collection.find().skip(skip).limit(limit)
@@ -55,11 +55,12 @@ def mongo_get_plaques(skip, limit) -> list[dict]:
 
 def mongo_find_one(plaque_id):
     """function finds one document by ObjectId"""
-    _id = ObjectId(plaque_id)
-    document_found = PLAQUES_COLLECTION.find_one({"_id": _id})
-    if document_found:
-        document_found["_id"] = str(document_found["_id"])
-    return document_found
+    found_document = PLAQUES_COLLECTION.find_one({"_id": ObjectId(plaque_id)})
+    if not found_document:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    if found_document:
+        found_document["_id"] = str(found_document["_id"])
+    return found_document
 
 
 def mongo_find_one_by_last_name(last_name):
@@ -118,3 +119,18 @@ async def mongo_update_one(plaque_id, update_doc):
 
     returned_doc = PLAQUES_COLLECTION.update_one(plaque_to_find, {"$set": update_doc})
     return returned_doc.acknowledged
+
+
+async def find_plaque_by_str_field(field, value):
+    """Searched MongoDB by field"""
+    found_plaques = PLAQUES_COLLECTION.find({field: value})
+    plaques_list = []
+    for plaque in found_plaques:
+        # Convert ObjectId to a string
+        if "_id" in plaque:
+            plaque["_id"] = str(plaque["_id"])
+            plaques_list.append(plaque)
+
+    if len(plaques_list) == 0:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    return plaques_list
