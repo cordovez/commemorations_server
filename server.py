@@ -3,12 +3,18 @@ Main FastAPI launcher
 """
 import uvicorn
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from api.MongoDB.db import init_db
 from api.routes.api_admin_routes import admin_router
 from api.routes.api_public_routes import public_router
 from views import account, home, plaques
+
+app = FastAPI()
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 
 app = FastAPI()
 
@@ -21,6 +27,20 @@ def main():
 def configure():
     configure_templates()
     configure_routes()
+
+
+origins = [
+    "http://localhost:3000",
+    "http://localhost:8000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 def configure_templates():
