@@ -1,7 +1,7 @@
 """Plaque controllers"""
 
-from utils.cloudinary_functions import transform_image, upload_image
-from utils.mongo_functions import mongo_update_one
+from api.utils.cloudinary_functions import transform_image, upload_image
+from api.utils.mongo_functions import mongo_update_one
 
 # async def upload_image_and_add_url(path_to_image: str, plaque_id: str):
 #     """Function has two steps:

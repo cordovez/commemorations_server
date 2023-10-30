@@ -6,9 +6,9 @@ import os
 from fastapi import APIRouter, File, UploadFile
 from fastapi.encoders import jsonable_encoder
 
-from controllers.plaque_controllers import upload_image_and_add_url
-from Models.Plaque import Plaque, PlaqueUpdates
-from utils.mongo_functions import (
+from api.controllers.plaque_controllers import upload_image_and_add_url
+from api.Models.Plaque import Plaque, PlaqueUpdates
+from api.utils.mongo_functions import (
     mongo_delete_one,
     mongo_insert_many,
     mongo_insert_one,

@@ -7,11 +7,8 @@ from bson.objectid import ObjectId
 from fastapi import HTTPException, status
 from fastapi.encoders import jsonable_encoder
 from pymongo import MongoClient
-from pymongo.collection import ReturnDocument
 
-from Models.Plaque import Plaque, PlaqueOut
-from MongoDB.db import connection_string
-from utils.merge_two_dict import merge
+from api.MongoDB.db import connection_string
 
 client = MongoClient(connection_string)
 Plaques_db = client.Plaques
@@ -39,8 +36,7 @@ def mongo_insert_many(documents: list):
 
 def mongo_get_plaques(skip, limit):
     """function gets list of plaques with limit default =10"""
-    collection = Plaques_db.plaques
-    plaques = collection.find().skip(skip).limit(limit)
+    plaques = PLAQUES_COLLECTION.find().skip(skip).limit(limit)
     plaques_dict = []
     for plaque in plaques:
         # Convert ObjectId to a string
@@ -63,18 +59,15 @@ def mongo_find_one(plaque_id):
     return found_document
 
 
-def mongo_find_one_by_last_name(last_name):
-    """function finds one document by last name"""
-
-    document_found = PLAQUES_COLLECTION.find_one({"commemorates.last_name": last_name})
-    if document_found:
-        document_found["_id"] = str(document_found["_id"])
-    return document_found
-
-
 def mongo_find(original_id):
     """function finds one document by ObjectId"""
     found_document = PLAQUES_COLLECTION.find_one({"original_id": original_id})
+
+    # return found_document
+    if not found_document:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    if found_document:
+        found_document["_id"] = str(found_document["_id"])
     return found_document
 
 
@@ -85,7 +78,13 @@ def mongo_find_many_with_image(skip, limit):
         .skip(skip)
         .limit(limit)
     )
-    return found_documents
+    plaques = []
+    for doc in found_documents:
+        if "_id" in doc:
+            doc["_id"] = str(doc["_id"])
+        plaque_dict = jsonable_encoder(doc)
+        plaques.append(plaque_dict)
+    return plaques
 
 
 def mongo_update_by_original_id(original_id, document):
