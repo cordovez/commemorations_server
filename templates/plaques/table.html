@@ -1,19 +1,7 @@
-{% extends "shared/base" %} {% block title %}Index{% endblock %} {% block head
-%} {{ super() }}
-<style type="text/css">
-  .important {
-    color: #336699;
-  }
-</style>
-{% endblock %} {% block content %}
-<h1>Index</h1>
-<p class="important">Welcome to my awesome homepage.</p>
-{% endblock %}
-
-<!-- {% extends "shared/_layout.html" %} {% block title %} Plaques {% endblock %} {%
-block content %} {{ super() }}
-<div class="mx-4"> -->
-<!-- <table class="min-w-[50%] m-4">
+{% extends "/shared/_layout.html" %} {% block title %}Index{% endblock %} {%
+block head %} {{ super() }} {% endblock %} {% block content %}
+<div class="bg-red-50 p-10">
+  <table class="min-w-[50%] m-4">
     <thead class="border-b text-lg">
       <tr>
         <th class="p-2">Last Name</th>
@@ -38,7 +26,7 @@ block content %} {{ super() }}
       </tr>
       {% endfor %}
     </tbody>
-  </table> -->
-<!-- <button class="px-3 py-1 bg-blue-600 text-white ml-4">Load more</button>
+  </table>
 </div>
-{% endblock %} -->
+<button class="px-3 py-1 bg-blue-600 text-white ml-4">Load more</button>
+{% endblock %}

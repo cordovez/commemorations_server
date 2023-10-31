@@ -3,7 +3,6 @@ Home Views
 """
 import pprint
 
-import requests
 from fastapi import APIRouter, HTTPException, Request, status
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -23,13 +22,14 @@ async def index(request: Request):
         plaques = await get_all_plaques()
     except HTTPException as e:
         plaques = []
-        print({"Error from index route": e})
+        print({"Error from index route": e.status_code})
 
     context = {"request": request, "plaques": plaques}
-    return templates.TemplateResponse("plaques/child.html", context)
+    return templates.TemplateResponse("plaques/table.html", context)
 
 
-@web_router.get("/about")
-async def about():
+@web_router.get("/about", response_class=HTMLResponse)
+async def about(request: Request):
     """about"""
-    return {}
+    context = {"request": request}
+    return templates.TemplateResponse("home/about.html", context)
